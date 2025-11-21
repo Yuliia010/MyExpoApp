@@ -6,7 +6,6 @@ import {
   Image,
   StyleSheet,
   Animated,
-  Dimensions,
   Pressable,
 } from "react-native";
 
@@ -32,9 +31,6 @@ const characters: Character[] = [
   { id: "5", name: "Друїд", image: require("../assets/images/hw3/друїд.jpg") },
 ];
 
-const { width } = Dimensions.get("window");
-const CARD_WIDTH = width / 2 - 20;
-
 const CharacterCard = ({
   character,
   index,
@@ -55,13 +51,25 @@ const CharacterCard = ({
     }).start();
   }, []);
 
-  const cardWidth = numColumns === 1 ? width - 20 : CARD_WIDTH;
-
   return (
     <Animated.View
-      style={[styles.card, { opacity: fadeAnim, width: cardWidth }]}
+      style={[
+        styles.card,
+        {
+          opacity: fadeAnim,
+          flex: numColumns === 1 ? 1 : 0.5,
+          flexDirection: numColumns === 1 ? "row" : "column",
+          alignItems: numColumns === 1 ? "center" : "center",
+        },
+      ]}
     >
-      <Image source={character.image} style={styles.image} />
+      <Image
+        source={character.image}
+        style={[
+          styles.image,
+          numColumns === 1 && { width: 60, height: 60, marginRight: 10 },
+        ]}
+      />
       <Text style={styles.name}>{character.name}</Text>
     </Animated.View>
   );
@@ -76,7 +84,7 @@ export default function HW3() {
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={toggleLayout} style={styles.button}>
+      <Pressable style={styles.button} onPress={toggleLayout}>
         <Text style={styles.buttonText}>
           {numColumns === 2 ? "Відобразити списком" : "Відобразити сіткою"}
         </Text>
@@ -111,7 +119,6 @@ const styles = StyleSheet.create({
     margin: 5,
     borderRadius: 10,
     padding: 10,
-    alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
