@@ -1,10 +1,33 @@
-import { Redirect, Stack } from "expo-router";
+import { Tabs } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function Layout() {
+export default function TabsLayout() {
   return (
-    <>
-      <Redirect href="/hw2" />
-      <Stack />
-    </>
+    <Tabs
+      screenOptions={{
+        headerShown: true,
+        tabBarActiveTintColor: "tomato",
+        tabBarInactiveTintColor: "gray",
+      }}
+    >
+      <Tabs.Screen
+        name="hw2"
+        options={{
+          title: "HW2",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="list" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="hw3"
+        options={{
+          title: "HW3",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="list" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }
