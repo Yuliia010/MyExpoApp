@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Animated,
   Pressable,
+  useWindowDimensions,
 } from "react-native";
 
 type Character = {
@@ -14,6 +15,13 @@ type Character = {
   name: string;
   image: any;
 };
+
+type Orientation = "portrait" | "landscape";
+
+function useOrientation(): Orientation {
+  const { width, height } = useWindowDimensions();
+  return width > height ? "landscape" : "portrait";
+}
 
 const characters: Character[] = [
   { id: "1", name: "Герой", image: require("../assets/images/hw3/hero.jpg") },
@@ -41,6 +49,7 @@ const CharacterCard = ({
   numColumns: number;
 }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const orientation = useOrientation();
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -51,6 +60,8 @@ const CharacterCard = ({
     }).start();
   }, []);
 
+  const isPortrait = orientation === "portrait";
+
   return (
     <Animated.View
       style={[
@@ -58,8 +69,9 @@ const CharacterCard = ({
         {
           opacity: fadeAnim,
           flex: numColumns === 1 ? 1 : 0.5,
-          flexDirection: numColumns === 1 ? "row" : "column",
-          alignItems: numColumns === 1 ? "center" : "center",
+          flexDirection: isPortrait ? "column" : "row",
+          alignItems: "center",
+          padding: 10,
         },
       ]}
     >
@@ -67,7 +79,7 @@ const CharacterCard = ({
         source={character.image}
         style={[
           styles.image,
-          numColumns === 1 && { width: 60, height: 60, marginRight: 10 },
+          !isPortrait && { width: 60, height: 60, marginRight: 10 },
         ]}
       />
       <Text style={styles.name}>{character.name}</Text>
@@ -77,7 +89,7 @@ const CharacterCard = ({
 
 export default function HW3() {
   const [numColumns, setNumColumns] = useState(2);
-
+  const orientation = useOrientation();
   const toggleLayout = () => {
     setNumColumns(numColumns === 2 ? 1 : 2);
   };
@@ -101,7 +113,7 @@ export default function HW3() {
           />
         )}
         numColumns={numColumns}
-        key={numColumns}
+        key={`${numColumns}-${orientation}`}
         contentContainerStyle={{ paddingBottom: 20 }}
       />
     </View>
@@ -118,7 +130,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     margin: 5,
     borderRadius: 10,
-    padding: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
